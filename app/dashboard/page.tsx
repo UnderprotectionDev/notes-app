@@ -1,4 +1,5 @@
 "use client";
+import { PageWrapper } from "@/components/page-wrapper";
 import { Button } from "@/components/ui/button";
 import { authClient } from "@/lib/auth-client";
 import { useRouter } from "next/navigation";
@@ -22,9 +23,9 @@ export function LogoutButton() {
 
 export default function Dashboard() {
   return (
-    <div>
+    <PageWrapper breadcrumbs={[{ label: "Dashboard", href: "/dashboard" }]}>
       <h1>Dashboard</h1>
       <LogoutButton />
-    </div>
+    </PageWrapper>
   );
 }
