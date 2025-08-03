@@ -29,6 +29,7 @@ import Link from "next/link";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { signUpUser } from "@/server/users";
+import { authClient } from "@/lib/auth-client";
 
 const formSchema = z.object({
   name: z.string().min(1),
@@ -52,6 +53,13 @@ export function SignUpForm({
       confirmPassword: "",
     },
   });
+
+  const signUp = async () => {
+    const data = await authClient.signIn.social({
+      provider: "google",
+      callbackURL: "/dashboard",
+    });
+  };
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     try {
@@ -178,16 +186,16 @@ export function SignUpForm({
                 </div>
                 <div className="flex flex-col gap-3">
                   <Button type="submit" className="w-full" disabled={isLoading}>
-                    {isLoading ? (
+                    {isLoading ?
                       <Loader2 className="size-4 animate-spin" />
-                    ) : (
-                      "Sign up"
-                    )}
+                    : "Sign up"}
                   </Button>
                   <Button
                     variant="outline"
                     className="w-full"
                     disabled={isLoading}
+                    onClick={signUp}
+                    type="button"
                   >
                     Login with Google
                   </Button>
