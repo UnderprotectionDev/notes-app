@@ -1,31 +1,20 @@
-"use client";
 import { PageWrapper } from "@/components/page-wrapper";
-import { Button } from "@/components/ui/button";
-import { authClient } from "@/lib/auth-client";
-import { useRouter } from "next/navigation";
+import { getNotebooks } from "@/server/notebooks";
 
-export function LogoutButton() {
-  const router = useRouter();
+export default async function Dashboard() {
+  const notebooks = await getNotebooks();
 
-  const handleLogout = async () => {
-    await authClient.signOut();
-    router.push("/login");
-  };
-
-  return (
-    <div>
-      <Button onClick={handleLogout} variant="outline">
-        Logout
-      </Button>
-    </div>
-  );
-}
-
-export default function Dashboard() {
   return (
     <PageWrapper breadcrumbs={[{ label: "Dashboard", href: "/dashboard" }]}>
-      <h1>Dashboard</h1>
-      <LogoutButton />
+      <h1>Notebooks</h1>
+      {notebooks.success &&
+        notebooks?.notebooks?.map((notebook) => (
+          <div key={notebook.id}>{notebook.name}</div>
+        ))}
+
+      {notebooks.success && notebooks?.notebooks?.length === 0 && (
+        <div>No notebooks found</div>
+      )}
     </PageWrapper>
   );
 }
