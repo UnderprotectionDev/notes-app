@@ -27,10 +27,12 @@ export const getNotebooks = async () => {
       return { success: false, message: "User not found" };
     }
 
-    const notebooksByUser = await db
-      .select()
-      .from(notebooks)
-      .where(eq(notebooks.userId, userId));
+    const notebooksByUser = await db.query.notebooks.findMany({
+      where: eq(notebooks.userId, userId),
+      with: {
+        notes: true,
+      },
+    });
 
     return { success: true, notebooks: notebooksByUser };
   } catch {
@@ -40,10 +42,12 @@ export const getNotebooks = async () => {
 
 export const getNotebookById = async (id: string) => {
   try {
-    const notebook = await db
-      .select()
-      .from(notebooks)
-      .where(eq(notebooks.id, id));
+    const notebook = await db.query.notebooks.findFirst({
+      where: eq(notebooks.id, id),
+      with: {
+        notes: true,
+      },
+    });
 
     return { success: true, notebook };
   } catch {

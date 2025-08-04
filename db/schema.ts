@@ -1,4 +1,4 @@
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 import { pgTable, text, timestamp, boolean, jsonb } from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
@@ -61,15 +61,10 @@ export const verification = pgTable("verification", {
   ),
 });
 
-export const schema = {
-  user,
-  session,
-  account,
-  verification,
-};
-
 export const notebooks = pgTable("notebooks", {
-  id: text("id").primaryKey(),
+  id: text("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
   name: text("name").notNull(),
   userId: text("user_id")
     .notNull()
@@ -94,7 +89,9 @@ export type Notebook = typeof notebooks.$inferSelect;
 export type InsertNotebook = typeof notebooks.$inferInsert;
 
 export const notes = pgTable("notes", {
-  id: text("id").primaryKey(),
+  id: text("id")
+    .primaryKey()
+    .default(sql`gen_random_uuid()`),
   title: text("title").notNull(),
   content: jsonb("content").notNull(),
   notebookId: text("notebook_id")
@@ -119,3 +116,15 @@ export const noteRelations = relations(notes, ({ one }) => ({
 }));
 
 export type Note = typeof notes.$inferSelect;
+export type InsertNote = typeof notes.$inferInsert;
+
+export const schema = {
+  user,
+  session,
+  account,
+  verification,
+  notebooks,
+  notes,
+  notebookRelations,
+  noteRelations,
+};
